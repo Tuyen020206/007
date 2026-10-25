@@ -85,6 +85,9 @@ class TeachingDevice(ABC):
         self._status = DeviceStatus.BORROWED
 
     def return_device(self):
+        if self._status != DeviceStatus.BORROWED:
+            raise ValueError(f"Thiết bị {self.id} không ở trạng thái đang mượn")
+
         self._status = DeviceStatus.AVAILABLE
 
     def __str__(self) -> str:
@@ -348,9 +351,10 @@ def main():
 
             elif choice == "7":
                 did = input("Mã thiết bị cần trả: ").strip()
-                device = (projector_repo.find_by_id(did) or
-                          ac_repo.find_by_id(did) or
-                          mic_repo.find_by_id(did))
+                for repo in (projector_repo, ac_repo, mic_repo):
+                    device = repo.find_by_id(did)
+                    if device is not None:
+                        break
                 if device is None:
                     print("Không tìm thấy thiết bị.")
                 else:
