@@ -184,6 +184,8 @@ class InMemoryRepository(IRepository[T]):
     def add(self, item: T) -> None:
         if item is None:
             raise ValueError("Không chấp nhận phần tử null")
+        if item.id in self._items:
+            raise DuplicateIdException(item.id)
         self._items[item.id] = item
 
     def remove(self, item_id: str) -> bool:
@@ -215,7 +217,7 @@ class HighestPriorityStrategy(ISelectionStrategy[T]):
     def select(self, candidates: List[T]) -> T:
         if not candidates:
             raise NoSuitableItemException()
-        return min(candidates, key=self._score_selector)
+        return max(candidates, key=self._score_selector)
 
 
 class FirstAvailableStrategy(ISelectionStrategy[T]):
@@ -248,6 +250,7 @@ class AllocationService(Generic[T]):
             candidates = [c for c in candidates if additional_condition(c)]
 
         selected = self._strategy.select(candidates)
+        selected.borrow()
         return selected
 
 
