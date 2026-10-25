@@ -4,7 +4,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TypeVar, Generic, List, Optional, Callable, Protocol, Set
-from datetime import datetime
 
 
 #  ENUM & NGOẠI LỆ
@@ -109,7 +108,7 @@ class ProjectorRemote(TeachingDevice):
 
     def is_ready_for_use(self) -> bool:
         return (self.status == DeviceStatus.AVAILABLE and
-                self.battery_level >= 10)
+                self.battery_level >= 20)
 
     def get_default_priority_score(self) -> float:
         return float(self.battery_level)
@@ -160,7 +159,7 @@ class WirelessMicrophone(TeachingDevice):
                 self.signal_quality >= 40)
 
     def get_default_priority_score(self) -> float:
-        return float(self.battery_level + self.signal_quality)
+        return float(self.battery_level + self.signal_quality)/2
 
 
 # GENERIC REPOSITOR
